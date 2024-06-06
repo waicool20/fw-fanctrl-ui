@@ -1,0 +1,11 @@
+[Desktop Entry]
+
+Type=Application
+Version=1.0
+Name=Framework Fan Control UI
+Comment=Tray icon for fw-fanctrl
+Path=/opt/fw-fanctrl-ui/
+Exec=/usr/bin/python3 fw-fanctrl-ui.py
+Icon=/opt/fw-fanctrl-ui/favicon.ico
+Terminal=false
+Categories=Utilities
