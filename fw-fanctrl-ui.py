@@ -31,6 +31,9 @@ def pause(icon, item):
 def resume(icon, item):
   result = subprocess.check_output(["fw-fanctrl", "--resume"]).decode("utf-8").strip()
   icon.notify(f"Resume: {result}")
+  
+def quit():
+  exit(0)
 
 def generate_main_menu():
   global currentStrategy
@@ -46,6 +49,7 @@ def generate_main_menu():
   yield MenuItem("Reload", reload)
   yield MenuItem("Pause", pause)
   yield MenuItem("Resume", resume)
+  yield MenuItem("Quit", quit)
 
 image=Image.open("favicon.ico")
 icon=pystray.Icon("name", image, program_name, Menu(generate_main_menu))
