@@ -17,8 +17,7 @@ def set_strategy(icon, item):
 
 def generate_strategy_menu():
   for i in subprocess.check_output(["fw-fanctrl", "--list-strategies"]).decode("utf-8").splitlines():
-    item=MenuItem(i, set_strategy, checked=is_current_strategy, radio=True)
-    yield item
+    yield MenuItem(i, set_strategy, checked=is_current_strategy, radio=True)
     
 def reload(icon, item):
   result = subprocess.check_output(["fw-fanctrl", "-r"]).decode("utf-8").strip()
@@ -39,12 +38,12 @@ def generate_main_menu():
   global currentStrategy
   try:
     currentStrategy = subprocess.check_output(["fw-fanctrl", "-q"]).decode("utf-8").strip()
-    yield MenuItem(program_name, action=None, enabled=False)
-    yield MenuItem(f"Current Strategy: {currentStrategy}", action=None, enabled=False)
   except:
     yield MenuItem("fw-fanctrl not installed", action=None, enabled=False)
     return
   
+  yield MenuItem(program_name, action=None, enabled=False)
+  yield MenuItem(f"Current Strategy: {currentStrategy}", action=None, enabled=False)
   yield MenuItem("Set Strategy", Menu(generate_strategy_menu))
   yield MenuItem("Reload", reload)
   yield MenuItem("Pause", pause)
