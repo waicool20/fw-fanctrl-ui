@@ -12,23 +12,23 @@ def is_current_strategy(item):
 
 def set_strategy(icon, item):
   global currentStrategy
-  currentStrategy = subprocess.check_output(["fw-fanctrl", "--strategy", item.text]).decode("utf-8").strip()
+  currentStrategy = subprocess.check_output(["fw-fanctrl", "use", item.text]).decode("utf-8").strip()
   icon.notify(f"Current strategy: {currentStrategy}")
 
 def generate_strategy_menu():
-  for i in subprocess.check_output(["fw-fanctrl", "--list-strategies"]).decode("utf-8").splitlines():
+  for i in subprocess.check_output(["fw-fanctrl", "print", "list"]).decode("utf-8").splitlines():
     yield MenuItem(i, set_strategy, checked=is_current_strategy, radio=True)
     
 def reload(icon, item):
-  result = subprocess.check_output(["fw-fanctrl", "-r"]).decode("utf-8").strip()
+  result = subprocess.check_output(["fw-fanctrl", "reload"]).decode("utf-8").strip()
   icon.notify(f"Reload: {result}")
     
 def pause(icon, item):
-  result = subprocess.check_output(["fw-fanctrl", "--pause"]).decode("utf-8").strip()
+  result = subprocess.check_output(["fw-fanctrl", "pause"]).decode("utf-8").strip()
   icon.notify(f"Pause: {result}")
   
 def resume(icon, item):
-  result = subprocess.check_output(["fw-fanctrl", "--resume"]).decode("utf-8").strip()
+  result = subprocess.check_output(["fw-fanctrl", "resume"]).decode("utf-8").strip()
   icon.notify(f"Resume: {result}")
   
 def quit():
@@ -37,7 +37,7 @@ def quit():
 def generate_main_menu():
   global currentStrategy
   try:
-    currentStrategy = subprocess.check_output(["fw-fanctrl", "-q"]).decode("utf-8").strip()
+    currentStrategy = subprocess.check_output(["fw-fanctrl", "print", "current"]).decode("utf-8").strip()
   except:
     yield MenuItem("fw-fanctrl not installed", action=None, enabled=False)
     return
