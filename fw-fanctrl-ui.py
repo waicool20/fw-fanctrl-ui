@@ -38,12 +38,14 @@ def generate_main_menu():
   global currentStrategy
   try:
     currentStrategy = subprocess.check_output(["fw-fanctrl", "print", "current"]).decode("utf-8").strip()
+    currentFanSpeed = subprocess.check_output(["fw-fanctrl", "print", "speed"]).decode("utf-8").strip()
   except:
     yield MenuItem("fw-fanctrl not installed", action=None, enabled=False)
     return
   
   yield MenuItem(program_name, action=None, enabled=False)
   yield MenuItem(f"Current Strategy: {currentStrategy}", action=None, enabled=False)
+  yield MenuItem(f"Current Fan Speed: {currentFanSpeed}", action=None, enabled=False)
   yield MenuItem("Set Strategy", Menu(generate_strategy_menu))
   yield MenuItem("Reload", reload)
   yield MenuItem("Pause", pause)
