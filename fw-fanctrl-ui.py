@@ -13,11 +13,15 @@ def is_current_strategy(item):
 def set_strategy(icon, item):
   global currentStrategy
   currentStrategy = subprocess.check_output(["fw-fanctrl", "use", item.text]).decode("utf-8").strip()
-  icon.notify(f"Current strategy: {currentStrategy}")
+  icon.notify(f"{currentStrategy}")
 
 def generate_strategy_menu():
   for i in subprocess.check_output(["fw-fanctrl", "print", "list"]).decode("utf-8").splitlines():
-    yield MenuItem(i, set_strategy, checked=is_current_strategy, radio=True)
+    if i.startswith("Strategy list:"): 
+      continue
+    cleanedName = i.strip()
+    cleanedName = i.lstrip(" - ")
+    yield MenuItem(cleanedName, set_strategy, checked=is_current_strategy, radio=True)
     
 def reload(icon, item):
   result = subprocess.check_output(["fw-fanctrl", "reload"]).decode("utf-8").strip()
@@ -37,7 +41,11 @@ def quit():
 def generate_main_menu():
   global currentStrategy
   try:
-    currentStrategy = subprocess.check_output(["fw-fanctrl", "print", "current"]).decode("utf-8").strip()
+    commandOutput = subprocess.check_output(["fw-fanctrl", "print", "current"]).decode("utf-8").strip()
+    commandOutput = commandOutput.splitlines()[0]
+    commandOutput = commandOutput.replace('Strategy in use:', '');
+    commandOutput = commandOutput.strip().strip("'")
+    currentStrategy = commandOutput
   except:
     yield MenuItem("fw-fanctrl not installed", action=None, enabled=False)
     return
