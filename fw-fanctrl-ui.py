@@ -9,6 +9,7 @@ import subprocess
 
 program_name = "Framework Fan Control UI"
 currentStrategy = ""
+isRunning = True
 
 
 def is_current_strategy(item: MenuItem):
@@ -45,17 +46,21 @@ def resume(icon: Icon, item: MenuItem):
 
 
 def quit():
+  isRunning = False
+  Thread.join(checkAliveThread)
   icon.stop()
   exit(0)
 
 
 def generate_main_menu():
-  global currentStrategy
+  global currentStrategy, icon, images
   if currentStrategy == "":
+    icon.icon = images["offline"]
     yield MenuItem("fw-fanctrl daemon not installed or running", action=None, enabled=False)
     yield MenuItem("Quit", quit)
     return
-
+  
+  icon.icon = images["default"]
   yield MenuItem(program_name, action=None, enabled=False)
   yield MenuItem(f"Current Strategy: {currentStrategy}", action=None, enabled=False)
   yield MenuItem("Set Strategy", Menu(generate_strategy_menu))
@@ -66,8 +71,8 @@ def generate_main_menu():
 
 
 def check_alive():
-  global icon, currentStrategy
-  while True:
+  global icon, currentStrategy, isRunning
+  while isRunning:
     try:
       commandOutput = subprocess.check_output(["fw-fanctrl", "print", "current"],
                                               stderr=subprocess.STDOUT).decode("utf-8").strip()
@@ -81,9 +86,13 @@ def check_alive():
     time.sleep(2)
 
 
-image = Image.open("favicon.ico")
-icon = pystray.Icon("name", image, program_name, Menu(generate_main_menu))
-Thread(target=check_alive, name="CheckAliveThread").start()
+images = {
+    "default": Image.open("icon/64.png"),
+    "offline": Image.open("icon/offline.png")
+}
+icon = pystray.Icon("name", images["default"], program_name, Menu(generate_main_menu))
+
+checkAliveThread = Thread(target=check_alive, name="CheckAliveThread").start()
 
 
 def setup(icon: Icon):
